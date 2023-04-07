@@ -18,7 +18,8 @@ def save_password(account, username, generate_password_option, url, website_name
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
     if generate_password_option == "yes":
-        password_length = int(input("Enter the desired length of the password: "))
+        password_length = int(
+            input("Enter the desired length of the password: "))
         password = generate_password(password_length)
     else:
         password = input("Enter the password for the website: ")
@@ -110,10 +111,13 @@ def update_website_info():
         new_username = input("Enter the new username: ")
         website["username"] = new_username
     elif choice == "3":
-        password_choice = input("Would you like to generate a new password? (y/n): ").lower()
+        password_choice = input(
+            "Would you like to generate a new password? (y/n): ").lower()
         if password_choice == "y":
-            password_length = int(input("Enter the desired length of the password: "))
-            use_symbols = input("Do you want to include symbols? (y/n): ").lower() == "y"
+            password_length = int(
+                input("Enter the desired length of the password: "))
+            use_symbols = input(
+                "Do you want to include symbols? (y/n): ").lower() == "y"
             new_password = generate_password(password_length, use_symbols)
             website["password"] = new_password
             print(f"The new password for {website_name} is: {new_password}")
@@ -152,13 +156,16 @@ def main():
             website_url = input("Enter the URL of the website: ")
             website_username = input("Enter the username for the website: ")
             user_email = input("Enter your email address: ")
-            additional_info = input("Enter any additional information about the website:\n")
-            generate_password_option = input("Would you like to generate a password? (yes/no): ")
+            additional_info = input(
+                "Enter any additional information about the website:\n")
+            generate_password_option = input(
+                "Would you like to generate a password? (yes/no): ")
             save_password(website_name, website_username,
                           generate_password_option, website_url, website_name, additional_info, user_email)
         elif choice == "1":
             website_name = input("Enter the name of the website: ")
-            website_username, website_password, url, user_email, additional_info = get_password(website_name)
+            website_username, website_password, url, user_email, additional_info = get_password(
+                website_name)
             if website_username is None:
                 print(f"No details found for {website_name}")
             else:
@@ -190,7 +197,8 @@ def main():
             print("Invalid choice. Please enter 1, 2, 3, 4 or 5.")
 
         while True:
-            continue_choice = input("Do you want to find another website name? (yes/no): ")
+            continue_choice = input(
+                "Do you want to find another website name? (yes/no): ")
             if continue_choice.lower() == "yes":
                 break
             elif continue_choice.lower() == "no":
