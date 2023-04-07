@@ -53,11 +53,10 @@ def get_password(website):
     try:
         for account, details in data.items():
             if details['website_name'].lower() == website.lower():
-                return details['username'], details['password'], details['url'], details['user_email'], details[
-                    'additional_info']
-        return None, None
+                return details['username'], details['password'], details['url'], details['user_email'], details['additional_info']
+        return None, None, None, None, None
     except KeyError:
-        return None, None
+        return None, None, None, None, None
 
 
 def delete_website_info(website_name):
