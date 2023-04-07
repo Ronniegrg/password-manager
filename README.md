@@ -1,5 +1,5 @@
 # password-manager
-Prerequisites
+##Prerequisites
 Python 3.x
 How to use
 Clone this repository or download the password_manager.py file.
