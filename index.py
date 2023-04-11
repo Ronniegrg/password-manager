@@ -17,12 +17,18 @@ def save_password(account, username, generate_password_option, url, website_name
             data = json.load(file)
     except (FileNotFoundError, json.JSONDecodeError):
         data = {}
+
+    if website_name.lower() in [x['website_name'].lower() for x in data.values()]:
+        print("Website name already exists! Please choose a different website name.")
+        return
+
     if generate_password_option == "yes":
         password_length = int(
             input("Enter the desired length of the password: "))
         password = generate_password(password_length)
     else:
         password = input("Enter the password for the website: ")
+
     data[account] = {"username": username,
                      "password": password,
                      "url": url,
@@ -138,6 +144,16 @@ def update_website_info():
         print(f"{choice} for {website_name} has been updated.")
 
 
+def get_all_websites():
+    with open('passwords.json', 'r') as file:
+        data = json.load(file)
+    websites = []
+    for account, details in data.items():
+        if details['website_name'] not in websites:
+            websites.append(details['website_name'])
+    return websites
+
+
 def main():
     # Prompts the user for input and saves passwords
     print("Welcome to Password Manager!")
@@ -147,7 +163,8 @@ def main():
         print("2. Save a password")
         print("3. Delete information for a website")
         print("4. Update information for a website")
-        print("5. Exit")
+        print("5. Get all websites")
+        print("6. Exit")
         choice = input("> ")
 
         if choice == "2":
@@ -190,6 +207,16 @@ def main():
         elif choice == "4":
             update_website_info()
         elif choice == "5":
+            website_names = get_all_websites()
+            if website_names:
+                count = 1
+                print("Website Names: ")
+                for name in website_names:
+                    print(f"{count} - {name}")
+                    count += 1
+            else:
+                print("No website names found.")
+        elif choice == "6":
             print("Exiting Password Manager...")
             break
         else:
