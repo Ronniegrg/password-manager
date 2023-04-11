@@ -151,6 +151,7 @@ def get_all_websites():
     for account, details in data.items():
         if details['website_name'] not in websites:
             websites.append(details['website_name'])
+    websites.sort(key=lambda x: x.lower())
     return websites
 
 
