@@ -1,5 +1,7 @@
 import json
+from display_password import display_password
 from generate_password import generate_password
+from get_password import get_password
 
 
 def update_website_info():
@@ -58,4 +60,6 @@ def update_website_info():
 
     with open('passwords.json', 'w') as file:
         json.dump(data, file)
-        print(f"{choice} for {website_name} has been updated.")
+        print(f"{website_name} informations has been updated.")
+        # display the updated information
+        display_password(website)
