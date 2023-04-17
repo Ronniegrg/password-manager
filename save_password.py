@@ -1,9 +1,13 @@
 import json
+import os
 
 
 def save_password(website_name, website_username, website_password, website_url, website_email, additional_info):
-    with open('passwords.json', 'r') as f:
-        data = json.load(f)
+    if os.path.exists('passwords.json'):
+        with open('passwords.json', 'r') as f:
+            data = json.load(f)
+    else:
+        data = {'passwords': []}
 
     passwords = data.get('passwords', [])
 
