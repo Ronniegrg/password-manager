@@ -34,7 +34,7 @@ def main():
                 password_length = int(
                     input("Enter the length of the password: "))
                 input_password = generate_password(password_length)
-            else:
+            elif generate_password_option == "no":
                 input_password = input("Enter a password: ")
             save_password(website_name, website_username,
                           input_password, website_url, user_email, additional_info)
