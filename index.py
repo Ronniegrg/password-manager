@@ -30,10 +30,17 @@ def main():
             generate_password_option = input(
                 "Would you like to generate a password? (yes/no): ")
             if generate_password_option == "yes":
-                # ask user for password length
-                password_length = int(
-                    input("Enter the length of the password: "))
-                input_password = generate_password(password_length)
+                while True:
+                    # ask user for password length
+                    password_length = int(
+                        input("Enter the length of the password: "))
+                    input_password = generate_password(password_length)
+                    print(f"Generated password: {input_password}")
+                    # ask user if they want to save the password
+                    password_confirmation = input(
+                        "Do you want to save this password? (yes/no): ")
+                    if password_confirmation.lower() == "yes":
+                        break
             elif generate_password_option == "no":
                 input_password = input("Enter a password: ")
             save_password(website_name, website_username,
