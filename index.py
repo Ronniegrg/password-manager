@@ -22,11 +22,7 @@ def main():
 
         if choice == "2":
             website_name = input("Enter the name of the website: ")
-            website_url = input("Enter the URL of the website: ")
             website_username = input("Enter the username for the website: ")
-            user_email = input("Enter your email address: ")
-            additional_info = input(
-                "Enter any additional information about the website:\n")
             generate_password_option = input(
                 "Would you like to generate a password? (yes/no): ")
             if generate_password_option == "yes":
@@ -43,6 +39,10 @@ def main():
                         break
             elif generate_password_option == "no":
                 input_password = input("Enter a password: ")
+            user_email = input("Enter your email address: ")
+            additional_info = input(
+                "Enter any additional information about the website:\n")
+            website_url = input("Enter the Login URL of the website: ")
             save_password(website_name, website_username,
                           input_password, website_url, user_email, additional_info)
         elif choice == "1":

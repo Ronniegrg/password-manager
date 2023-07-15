@@ -58,8 +58,14 @@ def update_website_info():
         new_additional_info = input("Enter the new additional information: ")
         website['additional_info'] = new_additional_info
 
-    with open('passwords.json', 'w') as file:
-        json.dump(data, file)
-        print(f"{website_name} informations has been updated.")
-        # display the updated information
-        display_password(website)
+    save_choice = input("Do you want to save the updated information? (y/n): ")
+    if save_choice == "y":
+        with open('passwords.json', 'w') as file:
+            json.dump(data, file)
+            print(f"{website_name} informations has been updated.")
+            # display the updated information
+            display_password(website)
+    else:
+        update_again_choice = input("Do you want to update again? (y/n): ")
+        if update_again_choice == "y":
+            update_website_info()
