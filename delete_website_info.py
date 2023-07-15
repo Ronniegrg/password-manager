@@ -13,9 +13,12 @@ def delete_website_info(website_name):
 
     for password in passwords:
         if password['website'] == website_name:
-            passwords.remove(password)
-            with open('passwords.json', 'w') as file:
-                json.dump(data, file)
-            return True
-
+            confirmation = input(f"Are you sure you want to delete {website_name}? (y/n): ")
+            if confirmation.lower() == 'y':
+                passwords.remove(password)
+                with open('passwords.json', 'w') as file:
+                    json.dump(data, file)
+                return True
+            else:
+                return False
     return False
