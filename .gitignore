@@ -1,3 +1,4 @@
 # Ignore passwords.json filee
 passwords.json
 __pycache__
+node_modules
