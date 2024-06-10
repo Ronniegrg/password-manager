@@ -37,12 +37,15 @@ def update_website_info():
     elif choice == "3":
         password_choice = input(
             "Would you like to generate a new password? (y/n): ").lower()
+        # checking if the password_choice is not 'y' or 'n'
+        # if not then ask the user to enter the correct choice
+        while password_choice not in ['y', 'n']:
+            password_choice = input(
+                "Please enter 'y' for yes and 'n' for no: ").lower()
         if password_choice == "y":
             password_length = int(
                 input("Enter the desired length of the password: "))
-            use_symbols = input(
-                "Do you want to include symbols? (y/n): ").lower() == "y"
-            new_password = generate_password(password_length, use_symbols)
+            new_password = generate_password(password_length)
             website["password"] = new_password
             print(f"The new password for {website_name} is: {new_password}")
         else:
@@ -59,6 +62,11 @@ def update_website_info():
         website['additional_info'] = new_additional_info
 
     save_choice = input("Do you want to save the updated information? (y/n): ")
+    # checking if the save_choice is not 'y' or 'n'
+    # if not then ask the user to enter the correct choice
+    while save_choice not in ['y', 'n']:
+        save_choice = input(
+            "Please enter 'y' for yes and 'n' for no: ").lower()
     if save_choice == "y":
         with open('passwords.json', 'w') as file:
             json.dump(data, file)
