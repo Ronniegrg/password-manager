@@ -1,4 +1,6 @@
 # Ignore passwords.json filee
 passwords.json
-__pycache__
+__pycache__/
+*.pyc
+.vscode/
 node_modules

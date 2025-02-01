@@ -2,7 +2,7 @@ from delete_website_info import delete_website_info
 from display_password import display_password
 from display_websites_table import display_websites_table
 from generate_password import generate_password
-from get_password import get_password
+from get_password import get_password, search_and_select
 from save_password import save_password
 from update_website_info import update_website_info
 
@@ -11,7 +11,7 @@ def main():
     # Prompts the user for input and saves passwords
     print("Welcome to Password Manager!")
     while True:
-        print("What would you like to do?")
+        print("\nWhat would you like to do?")
         print("1. Retrieve a password")
         print("2. Save a password")
         print("3. Delete information for a website")
@@ -46,20 +46,23 @@ def main():
             save_password(website_name, website_username,
                           input_password, website_url, user_email, additional_info)
         elif choice == "1":
-            website_name = input("Enter the name of the website: ")
-            website_info = get_password(website_name)
-            if website_info is None:
-                print(f"No details found for {website_name}")
-            else:
+            website_info = search_and_select()
+            if website_info:
                 display_password(website_info)
-                print()
-        elif choice == "3":
-            website_name = input("Enter the name of the website to delete: ")
-            deleted = delete_website_info(website_name)
-            if deleted:
-                print(f"Information for {website_name} deleted successfully.")
             else:
-                print(f"No information found for {website_name} ")
+                print("\nNo website selected")
+            continue
+        elif choice == "3":
+            website_info = search_and_select()
+            if website_info:
+                deleted = delete_website_info(website_info['website'])
+                if deleted:
+                    print(f"Information for {
+                          website_info['website']} deleted successfully.")
+                else:
+                    print(f"Deletion cancelled for {website_info['website']}")
+            else:
+                print("\nNo website selected")
         elif choice == "4":
             update_website_info()
         elif choice == "5":
