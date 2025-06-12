@@ -5,5 +5,11 @@
     "smtp_port": 465,
     "smtp_user": "your@email.com",
     "smtp_pass": "your_smtp_password",
-    "encryption_key": "Ronniegrg1979"
+    "encryption_key": "Ronniegrg1979",
+    "theme": "system",
+    "font_family": "Segoe UI",
+    "font_size": 11,
+    "auto_lock_time": "Never",
+    "lock_on_exit": true,
+    "auto_lock_timeout": 0
 }
