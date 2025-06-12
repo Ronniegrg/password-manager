@@ -3,7 +3,7 @@ Main window of the Password Manager application
 """
 from PyQt5.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QPushButton,
                              QMessageBox, QLabel, QHBoxLayout, QFrame, QSplitter,
-                             QStackedWidget, QToolButton, QScrollArea)
+                             QStackedWidget, QToolButton, QScrollArea, QDialog)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QPixmap, QIcon, QColor, QPalette
 from .login_window import LoginWindow
@@ -18,9 +18,9 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.settings = Settings()
         self.password_manager = PasswordManager()
+        self.authenticated = False  # Track authentication state
         self.init_ui()
-        # Load and apply the saved theme settings
-        self.load_appearance_settings()
+        self.load_appearance_settings()  # Apply appearance settings on startup
 
     def init_ui(self):
         self.setWindowTitle('Password Manager')
@@ -76,7 +76,8 @@ class MainWindow(QMainWindow):
 
         from .settings_dialog import SettingsDialog
         self.settings_btn = QToolButton()
-        self.settings_btn.setIcon(QIcon('D:\\Independant Projects\\password-manager\\settings.png'))
+        self.settings_btn.setIcon(
+            QIcon('D:\\Independant Projects\\password-manager\\settings.png'))
         self.settings_btn.setIconSize(QSize(32, 32))
         self.settings_btn.setToolTip('Settings')
         self.settings_btn.setCursor(Qt.PointingHandCursor)
@@ -211,24 +212,29 @@ class MainWindow(QMainWindow):
             value_label.setStyleSheet(
                 "color: white; font-size: 24px; font-weight: bold;")
 
+            # Store reference to the value label if it's the password count
+            if title == "Total Passwords":
+                self.password_count_label = value_label
+
             card_layout.addWidget(title_label)
             card_layout.addWidget(value_label)
             card_layout.addStretch()
 
             return card
 
-        # Get password count
-        try:
-            password_count = str(len(self.password_manager.get_all_websites()))
-        except:
-            password_count = "0"
+        # Create password count card with initial value "0"
+        # We'll update it properly after initialization
+        self.total_passwords_card = create_info_card(
+            "Total Passwords", "0", "#3498db")
 
-        cards_layout.addWidget(create_info_card(
-            "Total Passwords", password_count, "#3498db"))
+        cards_layout.addWidget(self.total_passwords_card)
         cards_layout.addWidget(create_info_card(
             "Security Score", "Strong", "#2ecc71"))
         cards_layout.addWidget(create_info_card(
             "Last Update", "Today", "#9b59b6"))
+
+        # Update the password count to show the actual value
+        self.update_password_count()
 
         # Quick actions section
         actions_container = QFrame()
@@ -309,42 +315,92 @@ class MainWindow(QMainWindow):
         else:
             self.show_login_window()
 
+    def update_password_count(self):
+        """Update the password count label with the current number of stored passwords."""
+        try:
+            # Use list_websites instead of get_all_websites (which doesn't exist)
+            password_count = str(len(self.password_manager.list_websites()))
+        except Exception as e:
+            password_count = "0"
+            print(f"Error updating password count: {e}")
+
+        # Update the label if it exists
+        if hasattr(self, 'password_count_label'):
+            self.password_count_label.setText(password_count)
+
     def show_setup_window(self):
         self.setup_window = SetupWindow(self)
+        self.setup_window.finished.connect(self.on_authentication_complete)
         self.setup_window.show()
 
     def show_login_window(self):
         self.login_window = LoginWindow(self)
+        self.login_window.finished.connect(self.on_authentication_complete)
         self.login_window.show()
 
+    def on_authentication_complete(self, result):
+        # This will be called when login/setup is finished
+        # result is QDialog.Accepted (1) if successful, QDialog.Rejected (0) if canceled
+        if result == QDialog.Accepted:
+            self.authenticated = True
+        else:
+            self.authenticated = False
+
+    def check_authentication(self):
+        # Check if authenticated before showing any secure window
+        if not self.authenticated:
+            QMessageBox.warning(self, 'Authentication Required',
+                                'You must login with your master password first.')
+            self.show_login_window()
+            return False
+        return True
+
     def show_add_password_window(self):
+        if not self.check_authentication():
+            return
         from .add_password_window import AddPasswordWindow
         self.add_window = AddPasswordWindow(self)
+        # Update password count when window is closed
+        self.add_window.finished.connect(self.update_password_count)
         self.add_window.show()
 
     def show_retrieve_password_window(self):
+        if not self.check_authentication():
+            return
         from .retrieve_password_window import RetrievePasswordWindow
         self.retrieve_window = RetrievePasswordWindow(self)
         self.retrieve_window.show()
 
     def show_update_password_window(self):
+        if not self.check_authentication():
+            return
         from .update_password_window import UpdatePasswordWindow
         self.update_window = UpdatePasswordWindow(self)
+        # Update password count when window is closed
+        self.update_window.finished.connect(self.update_password_count)
         self.update_window.show()
 
     def show_delete_password_window(self):
+        if not self.check_authentication():
+            return
         from .delete_password_window import DeletePasswordWindow
         self.delete_window = DeletePasswordWindow(self)
+        # Update password count when window is closed
+        self.delete_window.finished.connect(self.update_password_count)
         self.delete_window.show()
 
     def show_list_websites_window(self):
+        if not self.check_authentication():
+            return
         from .list_websites_window import ListWebsitesWindow
         self.list_window = ListWebsitesWindow(self)
         self.list_window.show()
 
     def show_settings_dialog(self):
         dlg = SettingsDialog(self)
-        dlg.exec_()
+        if dlg.exec_() == QDialog.Accepted:
+            # Reload appearance settings if settings were saved
+            self.load_appearance_settings()
 
     def load_appearance_settings(self):
         """Load and apply the saved appearance settings."""

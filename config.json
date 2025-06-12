@@ -6,7 +6,7 @@
     "smtp_user": "your@email.com",
     "smtp_pass": "your_smtp_password",
     "encryption_key": "Ronniegrg1979",
-    "theme": "system",
+    "theme": "dark",
     "font_family": "Segoe UI",
     "font_size": 11,
     "auto_lock_time": "Never",
