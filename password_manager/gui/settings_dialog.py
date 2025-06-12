@@ -2,10 +2,15 @@ from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButto
                              QMessageBox, QHBoxLayout, QFrame, QTabWidget,
                              QGridLayout, QCheckBox, QComboBox, QSpinBox,
                              QGroupBox, QFontComboBox, QColorDialog, QFormLayout,
-                             QRadioButton, QButtonGroup, QScrollArea, QWidget)
+                             QRadioButton, QButtonGroup, QScrollArea, QWidget,
+                             QFileDialog)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap, QFont, QPalette, QColor
 import sys
+import json
+import os
+import shutil
+from datetime import datetime
 if sys.platform == "win32":
     import winreg
 
@@ -235,11 +240,13 @@ class SettingsDialog(QDialog):
         backup_btn.setObjectName("secondaryButton")
         backup_btn.setIcon(QIcon('settings.png'))
         backup_btn.setIconSize(QSize(18, 18))
+        backup_btn.clicked.connect(self.export_backup)
 
         restore_btn = QPushButton("Import from Backup")
         restore_btn.setObjectName("secondaryButton")
         restore_btn.setIcon(QIcon('settings.png'))
         restore_btn.setIconSize(QSize(18, 18))
+        restore_btn.clicked.connect(self.import_backup)
 
         clear_btn = QPushButton("Clear All Data")
         clear_btn.setObjectName("destructiveButton")
@@ -535,6 +542,112 @@ class SettingsDialog(QDialog):
             self.apply_dark_theme()
         else:
             self.apply_light_theme()
+
+    def export_backup(self):
+        """Export the current database as a backup file"""
+        try:
+            # Get the database file path from the parent window
+            db_file = os.path.join(
+                os.getcwd(), self.parent.password_manager.db.db_file)
+            print(f"Database file path: {db_file}")  # Debug print
+
+            if not os.path.exists(db_file):
+                QMessageBox.critical(
+                    self, "Error", f"Database file not found at: {db_file}")
+                return
+
+            # Create backup filename with timestamp
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            default_name = f"password_manager_backup_{timestamp}.json"
+
+            # Open file dialog for saving backup
+            file_path, _ = QFileDialog.getSaveFileName(
+                self,
+                "Export Backup",
+                default_name,
+                "JSON Files (*.json)"
+            )
+
+            if file_path:
+                # Copy the database file to the selected location
+                shutil.copy2(db_file, file_path)
+                QMessageBox.information(
+                    self,
+                    "Success",
+                    f"Backup successfully exported to:\n{file_path}"
+                )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Error",
+                f"Failed to export backup:\n{str(e)}\n\nDatabase path: {db_file}"
+            )
+
+    def import_backup(self):
+        """Import a backup file to restore the database"""
+        try:
+            # Open file dialog for selecting backup file
+            file_path, _ = QFileDialog.getOpenFileName(
+                self,
+                "Import Backup",
+                "",
+                "JSON Files (*.json)"
+            )
+
+            if not file_path:
+                return
+
+            # Verify the backup file is valid JSON
+            try:
+                with open(file_path, 'r') as f:
+                    json.load(f)
+            except json.JSONDecodeError:
+                QMessageBox.critical(
+                    self,
+                    "Error",
+                    "Invalid backup file: Not a valid JSON file"
+                )
+                return
+
+            # Confirm with user
+            reply = QMessageBox.warning(
+                self,
+                "Confirm Import",
+                "This will replace your current database with the backup.\n"
+                "Are you sure you want to continue?",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+
+            if reply == QMessageBox.Yes:
+                # Get the database file path from the parent window
+                db_file = os.path.join(
+                    os.getcwd(), self.parent.password_manager.db.db_file)
+                print(f"Database file path: {db_file}")  # Debug print
+
+                # Create a backup of current database before importing
+                if os.path.exists(db_file):
+                    backup_name = f"{db_file}.pre_import_backup"
+                    shutil.copy2(db_file, backup_name)
+
+                # Copy the backup file to the database location
+                shutil.copy2(file_path, db_file)
+
+                # Reload the database
+                self.parent.password_manager.db.load_database()
+
+                QMessageBox.information(
+                    self,
+                    "Success",
+                    "Backup successfully imported.\n"
+                    "The application will now use the restored data."
+                )
+        except Exception as e:
+            QMessageBox.critical(
+                self,
+                "Error",
+                f"Failed to import backup:\n{str(e)}\n\nDatabase path: {db_file}"
+            )
 
 
 class ChangeMasterPasswordDialog(QDialog):
