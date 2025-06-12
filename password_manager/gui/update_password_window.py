@@ -14,6 +14,8 @@ class UpdatePasswordWindow(QDialog):
         super().__init__(parent)
         self.parent = parent
         self.clipboard = ClipboardManager()
+        self.setWindowFlags(self.windowFlags() & ~
+                            Qt.WindowContextHelpButtonHint)
         self.init_ui()
 
     def init_ui(self):
@@ -72,7 +74,8 @@ class UpdatePasswordWindow(QDialog):
 
         # Header title
         header_label = QLabel("Update Password Information")
-        header_label.setStyleSheet("font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;")
+        header_label.setStyleSheet(
+            "font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;")
         header_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(header_label)
 
@@ -83,7 +86,8 @@ class UpdatePasswordWindow(QDialog):
         search_form = QHBoxLayout()
         self.website_label = QLabel('Search Website:')
         self.website_search_input = QLineEdit()
-        self.website_search_input.setPlaceholderText('Type to search websites...')
+        self.website_search_input.setPlaceholderText(
+            'Type to search websites...')
         self.website_search_input.setStyleSheet("padding-right: 25px;")
         search_form.addWidget(self.website_label)
         search_form.addWidget(self.website_search_input, 1)
@@ -92,7 +96,7 @@ class UpdatePasswordWindow(QDialog):
         self.website_list = QListWidget()
         self.website_list.setMaximumHeight(150)
         self.website_list.setStyleSheet("""
-            QListWidget::item { 
+            QListWidget::item {
                 padding: 6px;
                 border-bottom: 1px solid #eee;
             }
@@ -174,7 +178,8 @@ class UpdatePasswordWindow(QDialog):
         self.additional_info_label = QLabel('Additional Info:')
         self.additional_info_input = QLineEdit()
         self.additional_info_input.setMinimumHeight(35)
-        form_layout.addRow(self.additional_info_label, self.additional_info_input)
+        form_layout.addRow(self.additional_info_label,
+                           self.additional_info_input)
 
         info_group.setLayout(form_layout)
         main_layout.addWidget(info_group)

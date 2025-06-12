@@ -18,6 +18,8 @@ class DeletePasswordWindow(QDialog):
     def init_ui(self):
         self.setWindowTitle('Delete Password')
         self.setMinimumSize(450, 350)
+        self.setWindowFlags(self.windowFlags() & ~
+                            Qt.WindowContextHelpButtonHint)
 
         main_layout = QVBoxLayout()
         main_layout.setSpacing(15)
@@ -46,9 +48,11 @@ class DeletePasswordWindow(QDialog):
         search_layout_h = QHBoxLayout()
         self.website_label = QLabel('Search:')
         self.website_search_input = QLineEdit()
-        self.website_search_input.setPlaceholderText('Type to search websites...')
+        self.website_search_input.setPlaceholderText(
+            'Type to search websites...')
         search_layout_h.addWidget(self.website_label)
-        search_layout_h.addWidget(self.website_search_input, 1)  # Give search box more space
+        # Give search box more space
+        search_layout_h.addWidget(self.website_search_input, 1)
         search_layout.addLayout(search_layout_h)
 
         # Website list with better styling
@@ -78,7 +82,8 @@ class DeletePasswordWindow(QDialog):
         main_layout.addWidget(account_group)
 
         # Spacer to push buttons to bottom
-        main_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+        main_layout.addItem(QSpacerItem(
+            20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         # Button section
         button_layout = QHBoxLayout()
@@ -94,7 +99,8 @@ class DeletePasswordWindow(QDialog):
         self.delete_btn.clicked.connect(self.delete_password)
 
         button_layout.addWidget(self.cancel_btn)
-        button_layout.addItem(QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
+        button_layout.addItem(QSpacerItem(
+            20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
         button_layout.addWidget(self.delete_btn)
 
         main_layout.addLayout(button_layout)

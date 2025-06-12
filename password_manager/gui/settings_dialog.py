@@ -14,6 +14,8 @@ class SettingsDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
+        self.setWindowFlags(self.windowFlags() & ~
+                            Qt.WindowContextHelpButtonHint)
         self.setWindowTitle('Settings')
         self.setMinimumSize(600, 450)
         self.setStyleSheet("""

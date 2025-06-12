@@ -15,7 +15,10 @@ class RetrievePasswordWindow(QDialog):
         super().__init__(parent)
         self.parent = parent
         self.clipboard = ClipboardManager()
-        self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(
+            Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint | Qt.CustomizeWindowHint)
+        self.setWindowFlags(self.windowFlags() & ~
+                            Qt.WindowContextHelpButtonHint)
         self.init_ui()
 
     def init_ui(self):
@@ -146,17 +149,17 @@ class RetrievePasswordWindow(QDialog):
                 border: 1px solid #e2e8f0;
             }
         ''')
-        
+
         search_section_layout = QVBoxLayout(search_section)
         search_section_layout.setContentsMargins(16, 16, 16, 16)
         search_section_layout.setSpacing(12)
-        
+
         # Section title with icon
         search_title_layout = QHBoxLayout()
         search_title_icon = QLabel("🔍")
         search_title_icon.setStyleSheet('font-size: 16px; color: #475569;')
         search_title_layout.addWidget(search_title_icon)
-        
+
         search_title = QLabel("Find Website")
         search_title.setStyleSheet('''
             font-size: 15px;
@@ -247,7 +250,7 @@ class RetrievePasswordWindow(QDialog):
         self.all_websites = []  # Store all websites for filtering
         self.update_website_list()
         search_section_layout.addWidget(self.website_combo)
-        
+
         scroll_layout.addWidget(search_section)
 
         # Credentials section with enhanced visual design
@@ -268,7 +271,7 @@ class RetrievePasswordWindow(QDialog):
         cred_title_icon = QLabel("🔒")
         cred_title_icon.setStyleSheet('font-size: 16px; color: #475569;')
         cred_title_layout.addWidget(cred_title_icon)
-        
+
         cred_title = QLabel("Stored Information")
         cred_title.setStyleSheet('''
             font-size: 15px;
@@ -400,7 +403,7 @@ class RetrievePasswordWindow(QDialog):
 
     def create_info_field(self, icon_text, label_text, is_password=False, is_multiline=False, is_highlighted=False):
         container = QFrame()
-        
+
         # Apply different styling if this field is highlighted
         if is_highlighted:
             container.setStyleSheet('''
@@ -414,7 +417,7 @@ class RetrievePasswordWindow(QDialog):
                 border-radius: 8px;
                 border: 1px solid #e2e8f0;
             ''')
-            
+
         layout = QHBoxLayout(container)
         layout.setContentsMargins(12, 10, 12, 10)
         layout.setSpacing(10)
@@ -441,7 +444,7 @@ class RetrievePasswordWindow(QDialog):
         if is_multiline:
             display.setMinimumHeight(60)
         display.setReadOnly(True)
-        
+
         # Apply different styling if this field is highlighted
         if is_highlighted:
             display.setStyleSheet('''
@@ -461,13 +464,14 @@ class RetrievePasswordWindow(QDialog):
                 font-weight: 500;
                 padding: 0;
             ''')
-            
+
         info.addWidget(display)
         layout.addLayout(info)
 
         # Add copy button with improved styling
         copy_btn = QPushButton()
-        copy_btn.setIcon(QIcon("clipboard-icon.png"))  # Use an icon if available
+        # Use an icon if available
+        copy_btn.setIcon(QIcon("clipboard-icon.png"))
         copy_btn.setText("📋")  # Fallback to emoji if icon not available
         copy_btn.setToolTip(f"Copy {label_text}")
         copy_btn.setCursor(Qt.PointingHandCursor)

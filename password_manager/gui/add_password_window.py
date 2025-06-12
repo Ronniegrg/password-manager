@@ -15,7 +15,10 @@ class AddPasswordWindow(QDialog):
         super().__init__(parent)
         self.parent = parent
         self.clipboard = ClipboardManager()
-        self.setWindowFlags(Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint)
+        self.setWindowFlags(
+            Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint | Qt.CustomizeWindowHint)
+        self.setWindowFlags(self.windowFlags() & ~
+                            Qt.WindowContextHelpButtonHint)
         self.init_ui()
 
     def init_ui(self):
@@ -146,17 +149,17 @@ class AddPasswordWindow(QDialog):
                 border: 1px solid #e2e8f0;
             }
         ''')
-        
+
         form_layout = QVBoxLayout(form_section)
         form_layout.setContentsMargins(16, 16, 16, 16)
         form_layout.setSpacing(14)
-        
+
         # Section title with icon
         form_title_layout = QHBoxLayout()
         form_title_icon = QLabel("📝")
         form_title_icon.setStyleSheet('font-size: 16px; color: #475569;')
         form_title_layout.addWidget(form_title_icon)
-        
+
         form_title = QLabel("Credential Information")
         form_title.setStyleSheet('''
             font-size: 15px;
@@ -168,17 +171,20 @@ class AddPasswordWindow(QDialog):
         form_layout.addLayout(form_title_layout)
 
         # Website input - required field with indicator
-        website_container = self.create_input_field("🌐", "Website", is_required=True)
+        website_container = self.create_input_field(
+            "🌐", "Website", is_required=True)
         self.website_input = website_container.findChild(QLineEdit)
         form_layout.addWidget(website_container)
 
         # Username input - required field with indicator
-        username_container = self.create_input_field("👤", "Username", is_required=True)
+        username_container = self.create_input_field(
+            "👤", "Username", is_required=True)
         self.username_input = username_container.findChild(QLineEdit)
         form_layout.addWidget(username_container)
 
         # Password input - required field with special styling
-        password_container = self.create_input_field("🔒", "Password", is_password=True, is_required=True, is_highlighted=True)
+        password_container = self.create_input_field(
+            "🔒", "Password", is_password=True, is_required=True, is_highlighted=True)
         self.password_input = password_container.findChild(QLineEdit)
         self.password_input.setEchoMode(QLineEdit.Password)
         form_layout.addWidget(password_container)
@@ -194,8 +200,10 @@ class AddPasswordWindow(QDialog):
         form_layout.addWidget(email_container)
 
         # Additional Info input
-        additional_info_container = self.create_input_field("📝", "Additional Info", is_multiline=True)
-        self.additional_info_input = additional_info_container.findChild(QLineEdit)
+        additional_info_container = self.create_input_field(
+            "📝", "Additional Info", is_multiline=True)
+        self.additional_info_input = additional_info_container.findChild(
+            QLineEdit)
         form_layout.addWidget(additional_info_container)
 
         scroll_layout.addWidget(form_section)
@@ -301,7 +309,7 @@ class AddPasswordWindow(QDialog):
         bottom_buttons.addWidget(self.cancel_btn)
 
         button_section.addLayout(bottom_buttons)
-        
+
         scroll_layout.addLayout(button_section)
         scroll_layout.addStretch()
 
@@ -311,12 +319,12 @@ class AddPasswordWindow(QDialog):
         content_layout.addWidget(scroll_area)
 
         main_layout.addWidget(content_frame)
-        
+
         self.setLayout(main_layout)
 
     def create_input_field(self, icon_text, label_text, is_password=False, is_multiline=False, is_required=False, is_highlighted=False):
         container = QFrame()
-        
+
         # Apply different styling if this field is highlighted
         if is_highlighted:
             container.setStyleSheet('''
@@ -330,7 +338,7 @@ class AddPasswordWindow(QDialog):
                 border-radius: 8px;
                 border: 1px solid #e2e8f0;
             ''')
-            
+
         layout = QHBoxLayout(container)
         layout.setContentsMargins(12, 10, 12, 10)
         layout.setSpacing(10)
@@ -349,7 +357,7 @@ class AddPasswordWindow(QDialog):
         label_layout = QHBoxLayout()
         label_layout.setContentsMargins(0, 0, 0, 0)
         label_layout.setSpacing(5)
-        
+
         field_label = QLabel(label_text)
         field_label.setStyleSheet('''
             font-size: 12px;
@@ -357,7 +365,7 @@ class AddPasswordWindow(QDialog):
             font-weight: 500;
         ''')
         label_layout.addWidget(field_label)
-        
+
         if is_required:
             required_label = QLabel("*")
             required_label.setStyleSheet('''
@@ -366,7 +374,7 @@ class AddPasswordWindow(QDialog):
                 font-weight: bold;
             ''')
             label_layout.addWidget(required_label)
-        
+
         label_layout.addStretch()
         info.addLayout(label_layout)
 
@@ -374,7 +382,7 @@ class AddPasswordWindow(QDialog):
         input_field = QLineEdit()
         if is_multiline:
             input_field.setMinimumHeight(60)
-        
+
         # Apply different styling if this field is highlighted
         if is_highlighted:
             input_field.setStyleSheet('''
@@ -393,7 +401,7 @@ class AddPasswordWindow(QDialog):
                 color: #0f172a;
                 padding: 4px 0;
             ''')
-            
+
         info.addWidget(input_field)
         layout.addLayout(info)
 
@@ -421,7 +429,8 @@ class AddPasswordWindow(QDialog):
                     background-color: #c7d2fe;
                 }
             ''')
-            toggle_btn.clicked.connect(lambda: self.toggle_password_visibility(input_field, toggle_btn))
+            toggle_btn.clicked.connect(
+                lambda: self.toggle_password_visibility(input_field, toggle_btn))
             layout.addWidget(toggle_btn)
 
         return container
@@ -457,10 +466,10 @@ class AddPasswordWindow(QDialog):
                 border-radius: 8px;
                 border: 1px solid #a7f3d0;
             ''')
-        
+
         self.status_label.setText(message)
         self.status_label.setVisible(True)
-        
+
         # Hide the message after 3 seconds
         QTimer.singleShot(3000, lambda: self.status_label.setVisible(False))
 
@@ -468,7 +477,8 @@ class AddPasswordWindow(QDialog):
         password = generate_password()
         self.password_input.setText(password)
         self.clipboard.copy_to_clipboard(password)
-        self.show_status_message("Secure password generated and copied to clipboard")
+        self.show_status_message(
+            "Secure password generated and copied to clipboard")
 
     def add_password(self):
         website = self.website_input.text()
@@ -479,7 +489,8 @@ class AddPasswordWindow(QDialog):
         additional_info = self.additional_info_input.text()
 
         if not all([website, username, password]):
-            self.show_status_message("Please fill in all required fields", is_error=True)
+            self.show_status_message(
+                "Please fill in all required fields", is_error=True)
             return
 
         try:
@@ -488,6 +499,8 @@ class AddPasswordWindow(QDialog):
                     self, 'Success', 'Password added successfully')
                 self.accept()
             else:
-                self.show_status_message("Website already exists in your password manager", is_error=True)
+                self.show_status_message(
+                    "Website already exists in your password manager", is_error=True)
         except Exception as e:
-            self.show_status_message(f"Failed to add password: {str(e)}", is_error=True)
+            self.show_status_message(
+                f"Failed to add password: {str(e)}", is_error=True)
