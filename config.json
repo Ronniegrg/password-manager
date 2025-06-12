@@ -1,0 +1,9 @@
+{
+    "email": "rounigorgees@gmail.com",
+    "password_hash": "6b1696f302944efd4ce60b57e33203d763a7f3b60b5bedd49f2346ec68400f57",
+    "smtp_server": "smtp.example.com",
+    "smtp_port": 465,
+    "smtp_user": "your@email.com",
+    "smtp_pass": "your_smtp_password",
+    "encryption_key": "Ronniegrg1979"
+}
