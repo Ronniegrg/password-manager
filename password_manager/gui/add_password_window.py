@@ -40,6 +40,24 @@ class AddPasswordWindow(QDialog):
         layout.addWidget(self.password_label)
         layout.addWidget(self.password_input)
 
+        # URL input
+        self.url_label = QLabel('URL:')
+        self.url_input = QLineEdit()
+        layout.addWidget(self.url_label)
+        layout.addWidget(self.url_input)
+
+        # Email input
+        self.email_label = QLabel('Email:')
+        self.email_input = QLineEdit()
+        layout.addWidget(self.email_label)
+        layout.addWidget(self.email_input)
+
+        # Additional Info input
+        self.additional_info_label = QLabel('Additional Info:')
+        self.additional_info_input = QLineEdit()
+        layout.addWidget(self.additional_info_label)
+        layout.addWidget(self.additional_info_input)
+
         # Generate password button
         self.generate_btn = QPushButton('Generate Password')
         self.generate_btn.clicked.connect(self.generate_password)
@@ -63,13 +81,17 @@ class AddPasswordWindow(QDialog):
         website = self.website_input.text()
         username = self.username_input.text()
         password = self.password_input.text()
+        url = self.url_input.text()
+        email = self.email_input.text()
+        additional_info = self.additional_info_input.text()
 
         if not all([website, username, password]):
-            QMessageBox.warning(self, 'Error', 'Please fill in all fields')
+            QMessageBox.warning(
+                self, 'Error', 'Please fill in all required fields')
             return
 
         try:
-            if self.parent.password_manager.add_password(website, username, password):
+            if self.parent.password_manager.add_password(website, username, password, url, email, additional_info):
                 QMessageBox.information(
                     self, 'Success', 'Password added successfully')
                 self.accept()

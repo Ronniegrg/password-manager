@@ -16,7 +16,25 @@ class Database:
         if os.path.exists(self.db_file):
             try:
                 with open(self.db_file, 'r') as f:
-                    return json.load(f)
+                    data = json.load(f)
+
+                    # Handle legacy format with "passwords" array
+                    if "passwords" in data and isinstance(data["passwords"], list):
+                        # Convert array format to dict format
+                        converted_data = {}
+                        for entry in data["passwords"]:
+                            if "website" in entry:
+                                website = entry["website"]
+                                converted_data[website] = {
+                                    'username': entry.get('username', ''),
+                                    'password': entry.get('password', ''),
+                                    'url': entry.get('url', ''),
+                                    'email': entry.get('email', ''),
+                                    'additional_info': entry.get('additional_info', '')
+                                }
+                        return converted_data
+
+                    return data
             except json.JSONDecodeError:
                 return {}
         return {}
@@ -25,12 +43,15 @@ class Database:
         with open(self.db_file, 'w') as f:
             json.dump(self.data, f, indent=4)
 
-    def add_entry(self, website, username, encrypted_password):
+    def add_entry(self, website, username, encrypted_password, url='', email='', additional_info=''):
         if website in self.data:
             return False
         self.data[website] = {
             'username': username,
-            'password': encrypted_password
+            'password': encrypted_password,
+            'url': url,
+            'email': email,
+            'additional_info': additional_info
         }
         self.save_database()
         return True

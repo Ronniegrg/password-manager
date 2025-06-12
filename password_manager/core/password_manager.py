@@ -11,22 +11,21 @@ class PasswordManager:
         self.db = Database()
         self.encryption = Encryption()
 
-    def add_password(self, website, username, password):
+    def add_password(self, website, username, password, url='', email='', additional_info=''):
         encrypted_password = self.encryption.encrypt(password)
-        return self.db.add_entry(website, username, encrypted_password)
+        return self.db.add_entry(website, username, encrypted_password, url, email, additional_info)
 
     def get_password(self, website):
         entry = self.db.get_entry(website)
         if entry:
-            return self.encryption.decrypt(entry['password'])
+            result = dict(entry)
+            try:
+                result['password'] = self.encryption.decrypt(entry['password'])
+                result['decryption_error'] = False
+            except Exception:
+                result['decryption_error'] = True
+            return result
         return None
-
-    def update_password(self, website, new_password):
-        encrypted_password = self.encryption.encrypt(new_password)
-        return self.db.update_entry(website, encrypted_password)
-
-    def delete_password(self, website):
-        return self.db.delete_entry(website)
 
     def list_websites(self):
         return self.db.list_websites()

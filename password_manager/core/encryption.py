@@ -35,3 +35,5 @@ class Encryption:
         if not self.fernet:
             raise ValueError("Encryption not initialized")
         return self.fernet.decrypt(encrypted_data.encode()).decode()
+
+
