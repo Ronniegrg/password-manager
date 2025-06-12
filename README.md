@@ -50,7 +50,7 @@ pip install -r requirements.txt
 To run the application, execute:
 
 ```bash
-python -m password_manager.main
+python gui.py
 ```
 
 ## First Run
@@ -77,36 +77,16 @@ On first run, you'll be prompted to:
 - Clipboard is automatically cleared after copying passwords
 - Password strength indicator helps create secure passwords
 
-## File Structure
+## Project Structure
 
 ```
-password_manager/
-├── __init__.py
-├── main.py
-├── config/
-│   ├── __init__.py
-│   └── settings.py
-├── core/
-│   ├── __init__.py
-│   ├── password_manager.py
-│   ├── encryption.py
-│   └── database.py
-├── gui/
-│   ├── __init__.py
-│   ├── main_window.py
-│   ├── login_window.py
-│   ├── setup_window.py
-│   ├── add_password_window.py
-│   ├── retrieve_password_window.py
-│   ├── update_password_window.py
-│   ├── delete_password_window.py
-│   ├── list_websites_window.py
-│   ├── settings_dialog.py
-│   └── widgets/
-└── utils/
-    ├── __init__.py
-    ├── clipboard_manager.py
-    └── password_generator.py
+password-manager/
+├── gui.py                 # Main GUI application
+├── config.json           # Application configuration
+├── passwords.json        # Encrypted password storage
+├── requirements.txt      # Project dependencies
+├── settings.png         # Application screenshot
+└── password_manager/    # Core application package
 ```
 
 ## Configuration
@@ -117,35 +97,12 @@ The application settings can be customized through the settings dialog or by man
 
 Passwords are stored in an encrypted format in the `passwords.json` file. Never edit this file manually as it could corrupt your password database.
 
-## Last Updated
-
-June 12, 2025
-
----
-
-## Screenshot
-
-![Password Manager GUI Screenshot](screenshot.png)
-_Modern, clean, and easy-to-use interface._
-
----
-
 ## Security
 
 - **Local Storage Only:** All your data is stored locally and never leaves your computer.
 - **No Cloud Sync:** For maximum privacy, there is no cloud or remote storage.
 - **File Safety:** Protect your `passwords.json` file with OS-level permissions or encryption for extra security.
 - **Open Source:** You can review the code for transparency.
-
----
-
-## Customization
-
-- **UI Customization:** You can change colors, fonts, and layout in `gui.py`.
-- **Password Policy:** Adjust password generation rules in `generate_password.py`.
-- **Add Features:** The modular codebase makes it easy to add new features or integrations.
-
----
 
 ## Troubleshooting
 
@@ -155,8 +112,6 @@ _Modern, clean, and easy-to-use interface._
   If the file is corrupted, delete or fix it manually. The app will recreate it if missing.
 - **App Won't Start:**
   Ensure you are running Python 3 and have all dependencies installed.
-
----
 
 ## FAQ
 
@@ -169,13 +124,9 @@ A: Yes, copy your `passwords.json` file to the new computer.
 **Q: Can I add more fields?**
 A: Yes, modify the code in `gui.py` and related files to add more fields.
 
----
-
 ## Contributing
 
 Contributions are welcome! Please open an issue or submit a pull request.
-
----
 
 ## License
 
