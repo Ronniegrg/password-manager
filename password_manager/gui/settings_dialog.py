@@ -5,6 +5,9 @@ from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QLabel, QLineEdit, QPushButto
                              QRadioButton, QButtonGroup, QScrollArea, QWidget)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon, QPixmap, QFont, QPalette, QColor
+import sys
+if sys.platform == "win32":
+    import winreg
 
 
 class SettingsDialog(QDialog):
@@ -328,19 +331,17 @@ class SettingsDialog(QDialog):
 
     def apply_appearance_settings(self, theme, font_family, font_size):
         """Apply the appearance settings to the current application."""
-        # Apply the font settings
         app_font = QFont(font_family, font_size)
         self.parent.setFont(app_font)
-
-        # Apply theme settings
         if theme == "light":
             self.apply_light_theme()
         elif theme == "dark":
             self.apply_dark_theme()
         elif theme == "system":
-            # Logic for system theme would go here
-            # For now, defaulting to light theme
-            self.apply_light_theme()
+            if is_system_dark_mode():
+                self.apply_dark_theme()
+            else:
+                self.apply_light_theme()
 
     def apply_light_theme(self):
         """Apply light theme to the application."""
@@ -498,12 +499,8 @@ class SettingsDialog(QDialog):
         """Load the current settings from the settings manager and update the UI."""
         from password_manager.config.settings import Settings
         settings = Settings()
-
-        # Load security settings
         auto_lock_seconds = settings.get("auto_lock_timeout", 15 * 60)
         lock_on_exit = settings.get("lock_on_exit", True)
-
-        # Update UI components
         if auto_lock_seconds == 0:
             self.auto_lock_combo.setCurrentText("Never")
         elif auto_lock_seconds == 5 * 60:
@@ -514,24 +511,28 @@ class SettingsDialog(QDialog):
             self.auto_lock_combo.setCurrentText("30 minutes")
         elif auto_lock_seconds == 60 * 60:
             self.auto_lock_combo.setCurrentText("1 hour")
-
         self.lock_on_exit.setChecked(lock_on_exit)
-
-        # Load appearance settings
         theme = settings.get("theme", "light")
         font_family = settings.get("font_family", "Segoe UI")
         font_size = settings.get("font_size", 10)
-
-        # Update UI components
         if theme == "light":
             self.light_theme.setChecked(True)
         elif theme == "dark":
             self.dark_theme.setChecked(True)
         else:
             self.system_theme.setChecked(True)
-
         self.font_combo.setCurrentFont(QFont(font_family))
         self.font_size.setValue(font_size)
+        # Apply the theme immediately to the dialog as well
+        if theme == "system":
+            if is_system_dark_mode():
+                self.apply_dark_theme()
+            else:
+                self.apply_light_theme()
+        elif theme == "dark":
+            self.apply_dark_theme()
+        else:
+            self.apply_light_theme()
 
 
 class ChangeMasterPasswordDialog(QDialog):
@@ -797,3 +798,15 @@ class ChangeMasterPasswordDialog(QDialog):
             QMessageBox.warning(
                 self, 'Error', f'Failed to change password: {str(e)}')
 
+
+def is_system_dark_mode():
+    if sys.platform != "win32":
+        return False  # Default to light on non-Windows
+    try:
+        registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        key = winreg.OpenKey(
+            registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
+        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        return value == 0  # 0 = dark, 1 = light
+    except Exception:
+        return False

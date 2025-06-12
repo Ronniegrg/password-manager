@@ -11,6 +11,9 @@ from .setup_window import SetupWindow
 from ..core.password_manager import PasswordManager
 from ..config.settings import Settings
 from .settings_dialog import SettingsDialog
+import sys
+if sys.platform == "win32":
+    import winreg
 
 
 class MainWindow(QMainWindow):
@@ -407,20 +410,18 @@ class MainWindow(QMainWindow):
         theme = self.settings.get("theme", "light")
         font_family = self.settings.get("font_family", "Segoe UI")
         font_size = self.settings.get("font_size", 10)
-
-        # Apply font settings
         from PyQt5.QtGui import QFont
         app_font = QFont(font_family, font_size)
         self.setFont(app_font)
-
-        # Apply theme
         if theme == "dark":
             self.apply_dark_theme()
         elif theme == "light":
             self.apply_light_theme()
         elif theme == "system":
-            # For system theme, we'll just use light for now
-            self.apply_light_theme()
+            if is_system_dark_mode():
+                self.apply_dark_theme()
+            else:
+                self.apply_light_theme()
 
     def apply_light_theme(self):
         """Apply light theme to the application."""
@@ -522,3 +523,16 @@ class MainWindow(QMainWindow):
         dark_palette.setColor(QPalette.HighlightedText, QColor(255, 255, 255))
 
         self.setPalette(dark_palette)
+
+
+def is_system_dark_mode():
+    if sys.platform != "win32":
+        return False  # Default to light on non-Windows
+    try:
+        registry = winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER)
+        key = winreg.OpenKey(
+            registry, r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize")
+        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")
+        return value == 0  # 0 = dark, 1 = light
+    except Exception:
+        return False
