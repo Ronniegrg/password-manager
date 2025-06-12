@@ -10,6 +10,7 @@ A secure password manager application built with Python and PyQt5.
 - Password strength indicator
 - Clipboard management
 - User-friendly GUI
+- Settings customization
 
 ## Installation
 
@@ -38,6 +39,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+## Dependencies
+
+- PyQt5 (>=5.15.0): GUI framework
+- cryptography (>=3.4.0): For encryption/decryption of passwords
+- pyperclip (>=1.8.0): For clipboard operations
+
 ## Running the Application
 
 To run the application, execute:
@@ -61,6 +68,7 @@ On first run, you'll be prompted to:
 - **Update Password**: Modify existing passwords
 - **Delete Password**: Remove stored passwords
 - **List Websites**: View all stored websites
+- **Settings**: Customize application behavior
 
 ## Security Features
 
@@ -93,26 +101,25 @@ password_manager/
 │   ├── update_password_window.py
 │   ├── delete_password_window.py
 │   ├── list_websites_window.py
+│   ├── settings_dialog.py
 │   └── widgets/
-│       ├── __init__.py
-│       ├── password_strength.py
-│       └── custom_widgets.py
 └── utils/
     ├── __init__.py
-    ├── password_generator.py
-    └── clipboard_manager.py
+    ├── clipboard_manager.py
+    └── password_generator.py
 ```
 
----
+## Configuration
 
-## Prerequisites
+The application settings can be customized through the settings dialog or by manually editing the `config.json` file.
 
-- Python 3.x
-- PyQt5 (usually included with Python)
-  ```bash
-  pip install pyqt5
-  ```
-  If you encounter issues, install PyQt5 via your OS package manager.
+## Data Storage
+
+Passwords are stored in an encrypted format in the `passwords.json` file. Never edit this file manually as it could corrupt your password database.
+
+## Last Updated
+
+June 12, 2025
 
 ---
 
@@ -120,27 +127,6 @@ password_manager/
 
 ![Password Manager GUI Screenshot](screenshot.png)
 _Modern, clean, and easy-to-use interface._
-
----
-
-## Data Storage
-
-All data is stored locally in `passwords.json` with the following structure:
-
-```json
-{
-  "passwords": [
-    {
-      "website": "example.com",
-      "username": "yourusername",
-      "password": "yourpassword",
-      "url": "https://example.com/login",
-      "email": "you@example.com",
-      "additional_info": "Any extra notes."
-    }
-  ]
-}
-```
 
 ---
 
