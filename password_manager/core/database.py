@@ -75,3 +75,21 @@ class Database:
 
     def list_websites(self):
         return list(self.data.keys())
+
+    def update_entry_full(self, old_website, new_website, username, encrypted_password, url, email, additional_info):
+        if old_website not in self.data:
+            return False
+        # If website name is changed, move the entry
+        if old_website != new_website:
+            if new_website in self.data:
+                return False  # Don't overwrite existing
+            self.data[new_website] = self.data.pop(old_website)
+        self.data[new_website] = {
+            'username': username,
+            'password': encrypted_password,
+            'url': url,
+            'email': email,
+            'additional_info': additional_info
+        }
+        self.save_database()
+        return True

@@ -32,3 +32,10 @@ class PasswordManager:
 
     def generate_secure_password(self, length=16):
         return generate_password(length)
+
+    def update_entry_full(self, old_website, new_website, username, password, url, email, additional_info):
+        encrypted_password = self.encryption.encrypt(password)
+        return self.db.update_entry_full(old_website, new_website, username, encrypted_password, url, email, additional_info)
+
+    def delete_password(self, website):
+        return self.db.delete_entry(website)
