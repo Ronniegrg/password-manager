@@ -11,7 +11,7 @@ class ClipboardManager:
     def __init__(self):
         self.settings = Settings()
         self.timeout = self.settings.get("clipboard_timeout", 30)
-        self._clear_thread = None
+        self._clear_timer = None
 
     def copy_to_clipboard(self, text):
         """
@@ -24,13 +24,12 @@ class ClipboardManager:
         """
         Schedule clipboard clearing after timeout
         """
-        if self._clear_thread and self._clear_thread.is_alive():
-            self._clear_thread.cancel()
+        if self._clear_timer and self._clear_timer.is_alive():
+            self._clear_timer.cancel()
 
         def clear_clipboard():
-            time.sleep(self.timeout)
             pyperclip.copy('')
 
-        self._clear_thread = threading.Thread(target=clear_clipboard)
-        self._clear_thread.daemon = True
-        self._clear_thread.start()
+        self._clear_timer = threading.Timer(self.timeout, clear_clipboard)
+        self._clear_timer.daemon = True
+        self._clear_timer.start()
