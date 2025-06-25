@@ -38,7 +38,6 @@ class LoginWindow(QDialog):
                 background: #fff;
                 border-radius: 14px;
                 border: 1px solid #e0e0e0;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             }
         ''')
         card_layout = QVBoxLayout(card)

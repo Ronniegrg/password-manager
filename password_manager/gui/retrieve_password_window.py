@@ -620,7 +620,6 @@ class RetrievePasswordWindow(QDialog):
             background-color: transparent;
             border-radius: 8px;
             border: 1px solid transparent;
-            transition: all 0.5s ease;
         ''')
         QTimer.singleShot(500, lambda: self.status_label.setVisible(False))
 
